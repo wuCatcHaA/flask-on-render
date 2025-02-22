@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Insurance Claims</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+#prediction-results {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Bai Jamjuree';
+}
+
+.icon img {
+    width: 300px;
+    height: 300px;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.results {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+.result-item {
+    text-align: center;
+    flex: 1;
+}
+
+.result-box {
+    width: 120px;
+    height: 60px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+    margin: 10px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.premium-input {
+    margin-top: 20px;
+    text-align: center; /* จัดตำแหน่งข้อความใน .premium-input ให้เป็นกลาง */
+    
+}
+
+#premium-input {
+    width: 300px; /* กำหนดความกว้างของ input */
+    height: 27px; /* กำหนดความสูงของ input */
+    padding: 5px; /* กำหนดระยะห่างภายใน */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    border-radius: 5px; /* มุมโค้งของ input */
+    border: 1px solid #ccc; /* เส้นขอบ */
+    text-align: center; /* ทำให้ข้อความใน input อยู่กลาง */
+}
+
+#confirm-button {
+    margin-top: 10px; /* ระยะห่างระหว่าง input และปุ่ม */
+    padding: 10px 20px; /* กำหนดระยะห่างภายในของปุ่ม */
+    font-size: 16px; /* ขนาดตัวอักษรในปุ่ม */
+    cursor: pointer; /* แสดงเคอร์เซอร์แบบ pointer เมื่อชี้ไปที่ปุ่ม */
+}
+
+.confirm-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.confirm-btn:hover {
+    background-color: #0056b3;
+}
+
+
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background-color: white;
+      /*background-image: url('images/gradiet.png'); /* ระบุเส้นทางของรูปภาพ */
+      /*background-size: cover; /* ให้ภาพครอบคลุมพื้นที่ */
+      /*background-position: center; /* วางภาพไว้ตรงกลาง */
+      /*background-repeat: no-repeat; /* ไม่ให้ภาพซ้ำ */
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      /*background-color: #b8e6e1;*/
+      padding: 20px 100px;
+      background: linear-gradient(90deg,#b7e7db,#eee8e1);
+      /*border-bottom: 3px solid #737373;*/
+      position: relative;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      left: 5%; /* เว้นระยะด้านซ้าย */
+      right: 5%; /* เว้นระยะด้านขวา */
+      bottom: 0;
+      height: 3px; /* ความหนาของเส้น */
+      background-color: #737373; /* สีของเส้น */
+    }
+
+
+    header nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      margin: 0;
+      padding: 0;
+    }
+
+    header nav ul li a {
+      text-decoration: none;
+      color: #003366;
+      font-weight: bold;
+      font-size: 1.5em;
+    }
+
+    header nav ul li a:hover {
+      color: #218838;
+    }
+
+/* ทำให้ header มี background-image */
+.hero {
+  margin: 0; /* ลบระยะห่างด้านบน */
+  text-align: left;
+  background-color: #eaf4ff;
+  background-image: url('images/gradiet.png'); /* ระบุเส้นทางของรูปภาพ */
+  background-size: cover; /* ให้ภาพครอบคลุมพื้นที่ */
+  background-position: center; /* วางภาพไว้ตรงกลาง */
+  background-repeat: no-repeat; /* ไม่ให้ภาพซ้ำ */
+  color: white; /* สีของข้อความใน header */
+  padding: 80px 100px; /* เพิ่มระยะห่างภายใน */
+}
+
+/* สำหรับเนื้อหาภายใน */
+.hero .content {
+  max-width: 600px; /* จำกัดความกว้างของข้อความ */
+  margin-bottom: 20px; /* เพิ่มระยะห่างระหว่างข้อความกับเมนู */
+}
+
+/* สไตล์เมนู */
+.hero nav ul {
+  display: flex; /* จัดเมนูให้อยู่ในแนวนอน */
+  list-style: none; /* ลบ bullet points */
+  margin: 0;
+  padding: 0;
+}
+
+.hero nav ul li {
+  margin-left: 20px; /* เพิ่มระยะห่างระหว่างเมนู */
+}
+
+.hero nav ul li a {
+  text-decoration: none; /* ลบขีดเส้นใต้ */
+  color: white; /* สีลิงก์ */
+  font-size: 1rem; /* ปรับขนาดตัวอักษร */
+}
+
+.hero nav ul li a:hover {
+  text-decoration: underline; /* เพิ่มเอฟเฟกต์เมื่อชี้เมาส์ */
+}
+
+
+    .hero h1 {
+      margin-top: 0; /* ลบระยะห่างด้านบนของ h1 */
+      margin-bottom: 0;
+      font-size: 3.5em;
+      color: #003366;
+      margin-bottom: 20px;
+      font-family: 'Bai Jamjuree';
+      white-space: pre-line; /* เปิดให้รองรับการตัดบรรทัด */
+    }
+    
+
+    .hero p {
+      font-size: 1.2em;
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    .hero .btn {
+      padding: 15px 30px;
+      background-color: #004aad;
+      color: white;
+      text-decoration: none;
+      font-size: 1.2em;
+      border-radius: 100px;
+      transition: background-color 0.3s ease;
+      display: inline-block; /* เพิ่มเพื่อให้รองรับการตั้งค่าขนาด */
+    }
+
+    .hero .btn:hover {
+      background-color: #218838;
+    }
+
+    .content-section {
+      padding: 50px 100px;
+      background-color: white;
+      text-align: center;
+      font-family: 'Bai Jamjuree';
+      
+    }
+
+    .content-section h2 {
+      color: #003366;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    .content-section p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+
+    .predict-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .predict-form select, .predict-form input {
+      width: calc(50% - 10px);
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .predict-form .submit-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .predict-form .submit-btn:hover {
+      background-color: #218838;
+    }
+
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #003366;
+      color: white;
+      font-family: 'Bai Jamjuree';
+    }
+
+    .form-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr; /* ซ้าย 1 ส่วน ขวา 2 ส่วน */
+        gap: 20px;
+        align-items: center;
+        max-width: 600px;
+        margin: auto;
+        }
+
+    .input-group{
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .description{
+      flex: 0 0 70%;
+      font-family: 'Bai Jamjuree';
+    }
+
+    .submit-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-group {
+  width: 80%;
+  margin: auto;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.col-number {
+  width: 5%;
+  font-weight: bold;
+}
+
+.col-dropdown {
+  width: 15%;
+}
+
+.col-dropdown select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #0078D4;
+  border-radius: 4px;
+}
+
+.col-description {
+  width: 70%;
+  color: #0078D4;
+  
+}
+
+.expandable {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  position: relative;
+  padding-right: 20px;
+}
+
+.expandable.open {
+  white-space: normal;
+  overflow: visible;
+}
+
+.toggle-btn {
+  position: absolute;
+  cursor: pointer;
+  font-weight: bold;
+  color: #0078D4;
+}
+
+
+.btn {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 20px 0;
+}
+
+.claim-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 0 10%;
+}
+
+.claim-item {
+    width: 50%; /* ทำให้แต่ละส่วนมีขนาดครึ่งหนึ่งของพื้นที่ */
+    margin-top: 35px;
+    margin-bottom: 35px;
+    text-align: left;
+    font-size: 1.2em;
+    display: flex;
+   align-items: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
+   justify-content: left; /* จัดให้อยู่ตรงกลางแนวนอน */
+    gap: 20px; /* เพิ่มระยะห่างระหว่างรูปและข้อความ */
+    
+}
+
+.image-content {
+  position: absolute;
+  top: 17%;
+  left: 42.5%;
+}
+
+.image-content img {
+  width: 870px;
+  height: auto;
+}
+
+
+.highlight {
+    font-weight: 700;
+    color: rgb(35, 37, 37);
+    font-family: 'Bai Jamjuree';
+    white-space: pre-line; /* เปิดให้รองรับการตัดบรรทัด */
+    text-align: center;
+
+}
+
+.claim-item span {
+    font-weight: 400;
+    color: rgb(35, 37, 37);
+}
+
+.popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+    .popup-content {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border-radius: 10px;
+      width: 300px;
+      padding: 20px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 20;
+      text-align: center;
+    }
+
+    .popup-content h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .popup-content h2.success {
+      color: #4CAF50; /* Green */
+    }
+
+    .popup-content h2.error {
+      color: #f44336; /* Red */
+    }
+
+    .popup-content .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 18px;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .popup-content .close-btn:hover {
+      color: #000;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background: #f44336;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #d32f2f;
+    }
+
+    img.fixed-size {
+  width: 100px; /* กำหนดความกว้าง */
+  height: 200px; /* กำหนดความสูง */
+  object-fit: cover; /* ปรับให้ภาพครอบคลุมพื้นที่ */
+}
+
+img.max-width {
+  max-width: 100%; /* ไม่ให้ภาพกว้างเกินขอบของ container */
+  height: auto;
+  display: inline-block;
+}
+
+
+.text-left {
+  text-align: left; /* จัดข้อความให้อยู่ทางซ้าย */
+}
+
+
+header .left-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #003366;
+  font-family: 'Bai Jamjuree';
+  white-space: pre-line; /* เปิดให้รองรับการตัดบรรทัด */
+}
+
+header .left-content img {
+  max-width: 8%; /* กำหนดขนาดรูปภาพ */
+  height: auto; /* รักษาสัดส่วนของรูปภาพ */
+}
+
+.claim-item .text {
+  font-size: 1.4rem; /* ปรับขนาดตัวอักษร */
+  font-weight: bold; /* ทำตัวหนา */
+  color: #00761a; /* สีข้อความ */
+  text-align: left; /* จัดให้อยู่ตรงกลาง */
+  white-space: pre-line; /* เปิดให้รองรับการตัดบรรทัด */
+  font-family: 'Bai Jamjuree';
+  letter-spacing: 0.5px;
+}
+  
+.claim-item .icon {
+  width: 50px; /* ปรับขนาดรูป */
+  height: 50px; /* ปรับขนาดรูป */
+}
+
+img.fixed-size {
+  width: 200px; /* กำหนดความกว้าง */
+  height: 150px; /* กำหนดความสูง */
+  object-fit: cover; /* ปรับให้ภาพครอบคลุมพื้นที่ */
+}
+
+.hero-content {
+  display: flex; /* ใช้ Flexbox */
+  align-items: center; /* จัดกึ่งกลางแนวตั้ง */
+  justify-content: space-between; /* เว้นระยะห่างระหว่างข้อความกับรูป */
+  gap: 20px; /* ระยะห่างระหว่าง text-content และ image-content */
+}
+
+.text-content {
+  flex: 1; /* ให้เนื้อหาข้อความใช้พื้นที่เท่าที่ต้องการ */
+  max-width: 50%; /* จำกัดความกว้างของข้อความ */
+}
+
+.extra-text {
+      display: none;
+      margin-left: 10px; /* เพิ่มระยะห่างระหว่างข้อความ */
+    }
+
+    .toggle-text {
+  display: none; /* ซ่อนข้อความเมื่อโหลดครั้งแรก */
+}
+
+.description .toggle-btn {
+  cursor: pointer;
+  color: #007bff;
+  margin-left: 10px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.description.expanded .toggle-text {
+  display: inline; /* แสดงข้อความเมื่อคลาส expanded ถูกเพิ่ม */
+}
+
+.chill {
+  display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 120%;
+    margin-top: 60px;
+    text-align: center;
+    font-size: 1.2em;
+    display: flex;
+   align-items: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
+    gap: 20px; /* เพิ่มระยะห่างระหว่างรูปและข้อความ */
+}
+
+.chill-item {
+  display: flex; /* ใช้ Flexbox เพื่อจัดแนว */
+  align-items: center; /* จัดให้อยู่ตรงกลางในแนวตั้ง */
+  gap: 10px; /* เว้นระยะระหว่างรูปและข้อความ */
+}
+
+.chill-item .icon {
+  width: 200px; /* ปรับขนาดรูป */
+  height: 200px; /* ปรับขนาดรูป */
+}
+
+.chill-item .text {
+  font-size: 1em; /* ปรับขนาดตัวหนังสือ */
+  line-height: 1.5; /* เว้นระยะบรรทัด */
+  white-space: pre-line; /* เปิดให้รองรับการตัดบรรทัด */
+  font-family: 'Bai Jamjuree';
+}
+
+
+
+  </style>
+
+
+</head>
+<body>
+  <header>
+    <div class="left-content"><img src="images/icon.png" alt="Scale Icon" class="left-content"/>
+      <span >AUTO INSURANCE 
+        CLAIMS</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#predict">PREDICT</a></li>
+        <li><a href="history.html">HISTORY</a></li>
+      </ul>
+    </nav>
+    </div>
+  </header>
+  
+  <section class="hero">
+    <h1>Prediction Frequency 
+      and Severity of 
+      Auto insurance Claims
+    </h1>
+
+    <div>
+        <div class="claim-item"><img class="icon" src="images/verifi.png" alt="Scale Icon" />
+            <span class="text">Claim Frequency refers to the total number 
+              of claims made within a portfolio</span>
+        </div>
+
+        <div class="claim-item"><img class="icon" src="images/verifi.png" alt="Scale Icon" />
+            <span class="text">Claim Severity refers to the total monetary 
+              value of losses from claims in the portfolio.</span>
+        </div>
+        <p></p>
+    </div>
+    <a href="#predict" class="btn">Let's Predict</a>
+    <div class="image-content">
+      <img src="images/car.png" alt="Large Image" />
+    </div>
+  </section>
+
+
+
+  <section class="content-section" id="predict">
+    <h2 class="container" >Enter Individual Policyholder Information</h2>
+    <form class="predict-form" action="/predict" method="POST">
+
+      <select style="width:25%; text-align:center;background-color: #baeef17b; border: 2px solid #4682b4;" id="npol" name="npol" required>
+        <option style="text-align-last: center;font-family: 'Bai Jamjuree';" value="">n_pol</option>
+      </select><br><br>
+      
+      <script>
+        const npolSelect = document.getElementById('npol');
+        for (let i = 1; i <= 35; i++) {
+          const option = document.createElement('option');
+          option.value = i;
+          option.textContent = i;
+          npolSelect.appendChild(option);
+        }
+      </script>
+        <div class="description" ><p style="text-align: left;">Number of motor insurance policies held by the client.</p></div>
+
+        <select style="width:25%; text-align:center;background-color: #bdd2e07d; border: 2px solid #4682b4;" id="gender" name="gender" required> 
+          <option style="text-align-last: center;" value="">gender</option>
+          <option value="0">Male</option>
+          <option value="1">Female</option>
+        </select><br><br>
+      <div class="description"><p style="text-align: left;">Gender of the client</p></div>
+
+      <select style="width:25%; text-align:center;background-color: #baeef17b; border: 2px solid #4682b4;" id="age" name="age" required>
+        <option style="text-align-last: center;" value="">age</option>
+      </select><br><br>
+      
+      <script>
+        const ageSelect = document.getElementById('age');
+        for (let i = 18; i <= 100; i++) {
+          const option = document.createElement('option');
+          option.value = i;
+          option.textContent = i;
+          ageSelect.appendChild(option);
+        }
+      </script>
+      <div class="description"><p style="text-align: left;">Age of the client.</p></div>
+
+      <select style="width:25%; text-align:center;background-color: #bdd2e07d; border: 2px solid #4682b4;" id="lic_age" name="lic_age" required>
+        <option style="text-align-last: center;" value="">license age</option>
+      </select><br><br>
+      
+      <script>
+        const select = document.getElementById('lic_age');
+        for (let i = 1; i <= 100; i++) {
+          const option = document.createElement('option');
+          option.value = i;
+          option.textContent = i;
+          select.appendChild(option);
+        }
+      </script>
+      <div class="description"><p style="text-align: left;">Number of years since the client obtained their driving license.</p></div>
+
+      <select style="width:25%; text-align:center;background-color: #baeef17b; border: 2px solid #4682b4;" id="client_norther" name="client_norther" required>
+        <option style="text-align-last: center;" value="">client_norther</option>
+      </select><br><br>
+      
+      <script>
+        const clientNortherSelect = document.getElementById('client_norther');
+        for (let i = 0; i <= 30; i++) {
+          const option = document.createElement('option');
+          option.value = i;
+          option.textContent = i;
+          clientNortherSelect.appendChild(option);
+        }
+      </script>
+
+     <div class="description"><p style="text-align: left;">The number of other types of insurance policies held by the client within 
+      the company<span class="toggle-text"> , excluding motor and home insurance. Examples include accident insurance, whole life insurance, and annuity policies.
+      </span><span class="toggle-btn" onclick="toggleText(this)">▼</span></p></div>
+
+      <select style="width:25%; text-align:center;background-color: #bdd2e07d; border: 2px solid #4682b4;" id="city" name="city" required onchange="updateRest()">
+        <option style="text-align-last: center;" value="">city</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select><br><br>
+
+      <div class="description"><p style="text-align: left;">The client resides in a major city<span class="toggle-text"> (Yes: The client resides in a major city, specifically Madrid or Barcelona.
+        No: The client does not reside in a major city (neither Madrid nor Barcelona)) </span><span class="toggle-btn" onclick="toggleText(this)">▼</span></p></div>
+
+
+      <select style="width:25%; text-align:center;background-color: #baeef17b; border: 2px solid #4682b4;" id="North" name="North" required onchange="updateRest()">
+        <option style="text-align-last: center;" value="">north</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select><br><br>
+      <div class="description"><p style="text-align: left;">The client resides in the northern region.<span class="toggle-text"> (Yes: The client lives in the northern region of the country.
+        No: The client does not live in the northern region.)</span>
+        <span class="toggle-btn" onclick="toggleText(this)">▼</span></p><p style="text-align: left;color: #f44336;position: absolute;margin-top: 0; display: none" id="city-message" >*North is automatically populated based on City variables. No manual input is required.</p></div>
+        <script>
+          // JavaScript
+          document.getElementById("city").addEventListener("change", function () {
+            const city = document.getElementById("city").value;
+            const cityMessage = document.getElementById("city-message");
+        
+            // ตรวจสอบว่า city เป็น 1 หรือไม่
+            if (city === "1") {
+              cityMessage.style.display = "block"; // แสดงข้อความ
+            } else {
+              cityMessage.style.display = "none"; // ซ่อนข้อความ
+            }
+          });
+        </script>
+
+
+      <select style="width:25%; text-align:center;background-color: #bdd2e07d; border: 2px solid #4682b4;pointer-events: none;" id="rest" name="rest" required>
+        <option style="text-align-last: center;" value="">rest</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select><br><br>
+      <div class="description"><p style="text-align: left;">The client resides in other areas of the country<span class="toggle-text"> (Yes: The client lives in an area that is neither a major city nor in the northern region.
+        No: The client resides in any area except for the northern region and a major city simultaneously.)</span><span class="toggle-btn" onclick="toggleText(this)">▼</span></p><p style="text-align: left;color: #f44336;position: absolute;margin-top: 0;" >*Rest is automatically generated based on other variables; no manual input is required.</p></div>
+
+
+      
+    </form>
+  </section>
+
+
+
+  <section id="prediction-results">
+    <div class="container">
+        <!-- ไอคอน -->
+        <div class="icon">
+            <img src="images/icon.png" alt="Scale Icon" />
+        </div>
+        <button  type="button" onclick="predict()"  class="submit-btn">Predict</button>
+
+        <!-- ผลลัพธ์การทำนาย -->
+        <div class="results">
+        <div class="result-item"><h3>Claim Frequency</h3><div class="result-box" id="claimfrequency"><span>...</span></div></div>
+        <div class="result-item"><h3>Claim Severity</h3><div class="result-box" id="claimseverity"><span>...</span></div></div>
+        </div>
+
+        
+        <!-- ป้อนข้อมูลค่าเบี้ยประกัน -->
+        <div class="premium-input">
+            <h3><p>Please enter the insurance premium you would like to assign to the customer for the duration of the policy:</p></h3>
+            <input type="text" id="premium-input" placeholder="Enter premium amount" />
+            <button id="confirmbutton" class="confirm-btn" onclick="validateInput()">Confirm</button>
+        </div>
+    </div>
+</section>
+
+  <!-- Pop-up -->
+  <div id="popup" class="popup-overlay">
+    <div class="popup-content">
+      <span class="close-btn" onclick="hidePopup()">&times;</span>
+      <h2 id="popupMessage" class=""></h2>
+      <p id="popupDescription"></p>
+    </div>
+  </div>
+
+  <section class="content-section" id="member">
+    <h2>Member</h2>
+    <div class="chill">
+      <div class="chill-item"><img class="icon" src="images/tob.png" alt="Scale Icon" /><span class="text">Chadarat Imsarapang
+    chadarat.i@kkumail.com
+      </span></div>
+      <div class="chill-item"><img class="icon" src="images/blood.png" alt="Scale Icon" /><span class="text">Parames Siripathanon
+        parames.s@kkumail.com
+          </span></div>
+  </section>
+  
+  <footer>
+    <p>&copy; The web application is part of the research project titled 'A Multi-Output Regression Approach for Predicting Frequency and Severity of Auto Insurance Claims'.</p>
+  </footer>
+
+  <script>
+    function updateRest() {
+    const city = document.getElementById("city").value;
+    const north = document.getElementById("North").value;
+    const nnorth=document.getElementById("North");
+    const rest = document.getElementById("rest");
+
+    if(city === "1"){
+      nnorth.value="0";
+    }
+
+    if (city === "0" && north === "0") {
+      rest.value = "1"; // กำหนด rest เป็น 1
+    } else {
+      rest.value = "0"; // กำหนด rest เป็น 0
+    }
+  }
+    // Function to validate input and show the appropriate popup
+    function validateInput() {
+      const input = document.getElementById('premium-input').value.trim();
+      const popup = document.getElementById('popup');
+      const popupMessage = document.getElementById('popupMessage');
+      const popupDescription = document.getElementById('popupDescription');
+
+      if (input === "") {
+    // ถ้า input เป็นค่าว่าง ให้แสดงข้อความ Sorry
+    popupMessage.textContent = "Sorry";
+    popupMessage.className = "error";
+    popupDescription.textContent = "Please enter a premium value.";
+      } else if (!npol || !gender || !age || !lic_age || !client_norther || !city || !North || !rest) {
+    // ถ้ามีช่องใดช่องหนึ่งว่าง ให้แสดงข้อความแจ้งเตือน
+    popupMessage.textContent = "Sorry";
+    popupMessage.className = "error";
+    popupDescription.textContent = "Please fill out all required fields.";
+} else {
+    // ถ้าข้อมูลครบถ้วน ให้แสดงข้อความ Thank You
+    popupMessage.textContent = "Thank You";
+    popupMessage.className = "success";
+    popupDescription.textContent = "Wish you luck naaa.!";
+}
+
+
+ /*     if (!npol || !gender || !age || !lic_age || !client_norther || !city || !North || !rest) {
+        popupMessage.textContent = "Sorry";
+        popupMessage.className = "error";
+        popupDescription.textContent = "Please enter a premium value.";
+      return; // หยุดการทำงานถ้ายังกรอกไม่ครบ
+    }*/
+      
+
+      // Show the popup
+      popup.style.display = "block";
+    }
+
+    // Function to hide the popup
+    function hidePopup() {
+      document.getElementById('popup').style.display = 'none';
+    }
+  </script>
+
+  <script>
+  async function predict() {
+    // ดึงค่าจากฟอร์ม
+    const npol = document.getElementById("npol").value;
+    const gender = document.getElementById("gender").value;
+    const age = document.getElementById("age").value;
+    const lic_age = document.getElementById("lic_age").value;
+    const client_norther = document.getElementById("client_norther").value;
+    const city = document.getElementById("city").value;
+    const North = document.getElementById("North").value;
+    const rest = document.getElementById("rest").value;
+
+    // ตรวจสอบค่าที่กรอกว่าครบทุกช่องหรือไม่
+    if (!npol || !gender || !age || !lic_age || !client_norther || !city || !North || !rest) {
+      alert("Please enter the prediction value.!");
+      return; // หยุดการทำงานถ้ายังกรอกไม่ครบ
+    }
+
+    // สร้าง request payload
+    const data = {
+      npol: parseInt(npol),
+      gender: parseInt(gender),
+      age: parseInt(age),
+      lic_age: parseInt(lic_age),
+      client_norther: parseInt(client_norther),
+      city: parseInt(city),
+      North: parseInt(North),
+      rest: parseInt(rest),
+    };
+
+    // เรียก API ไปยัง backend ที่ชื่อโมเดล
+    try {
+      const response = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch prediction");
+      }
+
+      const result = await response.json();
+
+      // อัปเดตค่าทำนายที่หน้าเว็บ
+      document.getElementById("claimfrequency").innerText = result.claims_frequency;
+      document.getElementById("claimseverity").innerText = result.claims_severity;
+    } catch (error) {
+      console.error("Error:", error);
+      alert("เกิดข้อผิดพลาดในการทำนาย กรุณาลองใหม่อีกครั้ง!");
+    }
+  }
+
+
+  /*function toggleText(btn) {
+  const parent = btn.parentElement;
+  parent.classList.toggle('open');
+
+  // เปลี่ยนไอคอนจาก ▼ เป็น ▲ เมื่อเปิด
+  if (parent.classList.contains('open')) {
+    btn.textContent = '▲';
+  } else {
+    btn.textContent = '▼';
+  }
+}*/
+function toggleText(button) {
+  const parent = button.closest(".description"); // หา div ของ description ที่เกี่ยวข้อง
+  const text = parent.querySelector(".toggle-text");
+
+  if (text.style.display === "none" || !text.style.display) {
+    text.style.display = "inline"; // แสดงข้อความ
+    button.textContent = "▲"; // เปลี่ยนลูกศรเป็นขึ้น
+  } else {
+    text.style.display = "none"; // ซ่อนข้อความ
+    button.textContent = "▼"; // เปลี่ยนลูกศรเป็นลง
+  }
+}
+
+
+document.getElementById('confirmbutton').addEventListener('click', function () {
+            // รับค่าจากฟอร์ม
+            const npol = document.getElementById("npol").value;
+            const gender = document.getElementById("gender").value;
+            const age = document.getElementById("age").value;
+            const lic_age = document.getElementById("lic_age").value;
+            const client_norther = document.getElementById("client_norther").value;
+            const city = document.getElementById("city").value;
+            const North = document.getElementById("North").value;
+            const rest = document.getElementById("rest").value;
+            const claimfrequency = document.getElementById("claimfrequency").innerText;
+            const claimseverity = document.getElementById("claimseverity").innerText;
+            const premium = document.getElementById("premium-input").value;
+            
+            if (!npol || !gender || !age || !lic_age || !client_norther || !city || !North || !rest ||!premium) {
+           return; // หยุดการทำงานถ้ายังกรอกไม่ครบ
+            }
+            // เก็บข้อมูลใน Local Storage
+            const newRow = {npol,gender,age,lic_age,client_norther,city,North,rest,claimfrequency,claimseverity,premium};
+            const historyData = JSON.parse(localStorage.getItem('historyData')) || [];
+            historyData.push(newRow);
+            localStorage.setItem('historyData', JSON.stringify(historyData));
+
+            // เปลี่ยนไปหน้า history.html
+            //window.location.href = 'TY.html';
+        });
+</script>
+
+</body>
+</html>
+
+
+
+
+
